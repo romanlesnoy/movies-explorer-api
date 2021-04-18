@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 const isEmail = require('validator/lib/isEmail');
-// const bcrypt = require("bcrypt");
-// const AuthError = require("../errors/auth-error");
+const bcrypt = require('bcrypt');
+const AuthError = require('../errors/auth-error');
 
 const userSchema = new Schema({
   email: {
@@ -29,21 +29,21 @@ const userSchema = new Schema({
   },
 });
 
-// userSchema.statics.findUserByCredentials = function (email, password) {
-//   return this.findOne({ email })
-//     .select("+password")
-//     .then((user) => {
-//       if (!user) {
-//         return Promise.reject(new AuthError("Неправильные почта или пароль"));
-//       }
+userSchema.statics.findUserByCredentials = function (email, password) {
+  return this.findOne({ email })
+    .select('+password')
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new AuthError('Неправильные почта или пароль'));
+      }
 
-//       return bcrypt.compare(password, user.password).then((matched) => {
-//         if (!matched) {
-//           return Promise.reject(new AuthError("Неправильные почта или пароль"));
-//         }
-//         return user;
-//       });
-//     });
-// };
+      return bcrypt.compare(password, user.password).then((matched) => {
+        if (!matched) {
+          return Promise.reject(new AuthError('Неправильные почта или пароль'));
+        }
+        return user;
+      });
+    });
+};
 
 module.exports = model('user', userSchema);
