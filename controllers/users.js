@@ -6,7 +6,6 @@ const NotFoundError = require('../errors/not-found-error');
 const ValidationError = require('../errors/validation-error');
 const ConflictError = require('../errors/conflict-error');
 const { DEV_JWT_SECRET } = require('../utils/config');
-console.log(DEV_JWT_SECRET);
 
 const getUser = (req, res, next) => {
   const id = req.user._id;

@@ -8,13 +8,14 @@ const { errors, celebrate, Joi } = require('celebrate');
 const usersRouter = require('./routes/users.js');
 const moviesRouter = require('./routes/movies.js');
 const auth = require('./middlewares/auth');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { login, createProfile } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
 const { DATA_BASE_PATH } = require('./utils/config');
-console.log(DATA_BASE_PATH);
 
 const app = express();
-mongoose.connect( DATA_BASE_PATH, {
+
+mongoose.connect(DATA_BASE_PATH, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
@@ -26,6 +27,8 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.use(helmet());
+
+app.use(requestLogger);
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -48,6 +51,8 @@ app.use('/', usersRouter, moviesRouter);
 app.use('*', (req, res, next) => {
   next(new NotFoundError('Запращиваемая страница не найдена'));
 });
+
+app.use(errorLogger);
 
 app.use(errors());
 
