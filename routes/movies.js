@@ -2,10 +2,10 @@ const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const { getMovies, createMovie, deleteMovie } = require('../controllers/movies');
 
-router.get('/movies', getMovies);
+router.get('/', getMovies);
 
 router.post(
-  '/movies',
+  '/',
   celebrate({
     body: Joi.object().keys({
       country: Joi.string().required(),
@@ -25,7 +25,7 @@ router.post(
 );
 
 router.delete(
-  '/movies/:movieId',
+  '/:movieId',
   celebrate({
     params: Joi.object().keys({
       movieId: Joi.string().required().length(24).hex(),

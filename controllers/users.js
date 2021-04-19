@@ -39,6 +39,9 @@ const updateProfile = (req, res, next) => {
       });
     })
     .catch((err) => {
+      if (err.codeName === 'DuplicateKey') {
+        next(new ConflictError('Такой email уже существует'));
+      }
       next(err);
     });
 };
@@ -59,7 +62,7 @@ const createProfile = (req, res, next) => {
       });
     })
     .catch((err) => {
-      if (err.name === 'MongoError') {
+      if (err.codeName === 'DuplicateKey') {
         next(new ConflictError('Такой пользователь уже существует'));
       }
       next(err);

@@ -5,10 +5,10 @@ const {
   updateProfile,
 } = require('../controllers/users');
 
-router.get('/users/me', getUser);
+router.get('/me', getUser);
 
 router.patch(
-  '/users/me',
+  '/me',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().required().email(),
