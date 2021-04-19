@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const limiter = require('./utils/limiter');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -14,6 +15,7 @@ const NotFoundError = require('./errors/not-found-error');
 const { DATA_BASE_PATH } = require('./utils/config');
 
 const app = express();
+const { PORT = 3000 } = process.env;
 
 mongoose.connect(DATA_BASE_PATH, {
   useNewUrlParser: true,
@@ -21,14 +23,13 @@ mongoose.connect(DATA_BASE_PATH, {
   useFindAndModify: false,
 });
 
-const { PORT = 3000 } = process.env;
-
 app.use(cors());
 app.use(bodyParser.json());
 
 app.use(helmet());
 
 app.use(requestLogger);
+app.use(limiter);
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
