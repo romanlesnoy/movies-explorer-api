@@ -12,12 +12,12 @@ const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { login, createProfile } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
-const { DATA_BASE_PATH } = require('./utils/config');
+const { DEV_DATA_BASE_PATH } = require('./utils/config');
 
 const app = express();
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, NODE_ENV, PRODUCTION_DATA_BASE_PATH } = process.env;
 
-mongoose.connect(DATA_BASE_PATH, {
+mongoose.connect(NODE_ENV === 'production' ? PRODUCTION_DATA_BASE_PATH : DEV_DATA_BASE_PATH, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
