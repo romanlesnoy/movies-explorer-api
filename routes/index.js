@@ -5,13 +5,7 @@ const { login, createProfile } = require('../controllers/users');
 const usersRouter = require('./users');
 const moviesRouter = require('./movies');
 const NotFoundError = require('../errors/not-found-error');
-
-router.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-}), login);
+const { NOT_FOUND_DATA_MESSAGE } = require('../utils/responseMesseges');
 
 router.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -21,12 +15,19 @@ router.post('/signup', celebrate({
   }),
 }), createProfile);
 
+router.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+  }),
+}), login);
+
 router.use('/users', auth, usersRouter);
 
 router.use('/movies', auth, moviesRouter);
 
 router.use('*', (req, res, next) => {
-  next(new NotFoundError('Запращиваемая страница не найдена'));
+  next(new NotFoundError(NOT_FOUND_DATA_MESSAGE));
 });
 
 module.exports = router;

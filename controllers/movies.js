@@ -1,6 +1,7 @@
 const Movie = require('../models/movie');
 const NotFoundError = require('../errors/not-found-error');
 const ForbiddenError = require('../errors/forbidden-error');
+const { NOT_FOUND_DATA_MESSAGE, NO_ACCESS_RIGHTS_MESSAGE } = require('../utils/responseMesseges');
 
 const getMovies = (req, res, next) => {
   Movie.find({})
@@ -49,16 +50,16 @@ const deleteMovie = (req, res, next) => {
   const owner = req.user._id;
   Movie.findOne({ _id: req.params.movieId })
     .orFail(() => {
-      throw new NotFoundError('Данные не найдены');
+      throw new NotFoundError(NOT_FOUND_DATA_MESSAGE);
     })
     .then((movie) => {
       if (String(movie.owner) !== owner) {
-        throw new ForbiddenError('Недостаточно прав');
+        throw new ForbiddenError(NO_ACCESS_RIGHTS_MESSAGE);
       }
       return Movie.findByIdAndRemove(movie._id);
     })
-    .then(() => {
-      res.status(200).send({ message: 'Фильм удалён' });
+    .then((deletedData) => {
+      res.status(200).send(deletedData);
     })
     .catch((err) => {
       next(err);

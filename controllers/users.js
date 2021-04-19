@@ -6,12 +6,15 @@ const NotFoundError = require('../errors/not-found-error');
 const ValidationError = require('../errors/validation-error');
 const ConflictError = require('../errors/conflict-error');
 const { DEV_JWT_SECRET } = require('../utils/config');
+const {
+  NOT_FOUND_DATA_MESSAGE, INVALID_DATA_MESSAGE, CONFLICT_EMAIL_MESSAGE, SUCCSESS_REG_MESSAGE,
+} = require('../utils/responseMesseges');
 
 const getUser = (req, res, next) => {
   const id = req.user._id;
   User.findById(id)
     .orFail(() => {
-      throw new NotFoundError('Данные не найдены');
+      throw new NotFoundError(NOT_FOUND_DATA_MESSAGE);
     })
     .then((user) => {
       res.status(200).send({
@@ -30,7 +33,7 @@ const updateProfile = (req, res, next) => {
     { runValidators: true, new: true },
   )
     .orFail(() => {
-      throw new ValidationError('Переданы неверные данные');
+      throw new ValidationError(INVALID_DATA_MESSAGE);
     })
     .then((updateData) => {
       res.status(200).send({
@@ -39,9 +42,6 @@ const updateProfile = (req, res, next) => {
       });
     })
     .catch((err) => {
-      if (err.codeName === 'DuplicateKey') {
-        next(new ConflictError('Такой email уже существует'));
-      }
       next(err);
     });
 };
@@ -57,13 +57,13 @@ const createProfile = (req, res, next) => {
     }))
     .then((user) => {
       res.status(200).send({
-        message: 'Регистрация прошла успешно',
+        message: SUCCSESS_REG_MESSAGE,
         email: user.email,
       });
     })
     .catch((err) => {
-      if (err.codeName === 'DuplicateKey') {
-        next(new ConflictError('Такой пользователь уже существует'));
+      if (err.name === 'MongoError') {
+        next(new ConflictError(CONFLICT_EMAIL_MESSAGE));
       }
       next(err);
     });
@@ -73,9 +73,13 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : DEV_JWT_SECRET, {
-        expiresIn: '7d',
-      });
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : DEV_JWT_SECRET,
+        {
+          expiresIn: '7d',
+        },
+      );
       res.status(200).send({ token });
     })
     .catch((err) => {
