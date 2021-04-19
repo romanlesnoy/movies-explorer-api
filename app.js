@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors, celebrate, Joi } = require('celebrate');
@@ -9,9 +10,11 @@ const moviesRouter = require('./routes/movies.js');
 const auth = require('./middlewares/auth');
 const { login, createProfile } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
+const { DATA_BASE_PATH } = require('./utils/config');
+console.log(DATA_BASE_PATH);
 
 const app = express();
-mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
+mongoose.connect( DATA_BASE_PATH, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
@@ -21,6 +24,8 @@ const { PORT = 3000 } = process.env;
 
 app.use(cors());
 app.use(bodyParser.json());
+
+app.use(helmet());
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
