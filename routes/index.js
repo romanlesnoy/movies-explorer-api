@@ -5,7 +5,7 @@ const { login, createProfile } = require('../controllers/users');
 const usersRouter = require('./users');
 const moviesRouter = require('./movies');
 const NotFoundError = require('../errors/not-found-error');
-const { NOT_FOUND_DATA_MESSAGE } = require('../utils/responseMesseges');
+const { NOT_FOUND_PAGE_MESSAGE } = require('../utils/responseMesseges');
 
 router.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -27,7 +27,7 @@ router.use('/users', auth, usersRouter);
 router.use('/movies', auth, moviesRouter);
 
 router.use('*', (req, res, next) => {
-  next(new NotFoundError(NOT_FOUND_DATA_MESSAGE));
+  next(new NotFoundError(NOT_FOUND_PAGE_MESSAGE));
 });
 
 module.exports = router;
