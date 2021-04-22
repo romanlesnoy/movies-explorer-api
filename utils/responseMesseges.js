@@ -7,6 +7,8 @@ const AUTH_REQUIRED_MESSAGE = 'Необходима авторизация';
 const AUTH_DATA_ERROR_MESSAGE = 'Неправильные почта или пароль';
 
 const SUCCSESS_REG_MESSAGE = 'Регистрация прошла успешно';
+const SUCCSESS_DELETE_MESSAGE = 'Данные успешно удалены';
+const SUCCSESS_CREATE_MESSAGE = 'Данные успешно добавлены';
 
 module.exports = {
   NOT_FOUND_DATA_MESSAGE,
@@ -17,4 +19,6 @@ module.exports = {
   AUTH_REQUIRED_MESSAGE,
   AUTH_DATA_ERROR_MESSAGE,
   SUCCSESS_REG_MESSAGE,
+  SUCCSESS_DELETE_MESSAGE,
+  SUCCSESS_CREATE_MESSAGE,
 };

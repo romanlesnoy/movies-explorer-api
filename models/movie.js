@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose');
 const isURL = require('validator/lib/isURL');
+const { INVALID_DATA_MESSAGE } = require('../utils/responseMesseges');
 
 const movieSchema = new Schema({
   country: {
@@ -29,7 +30,7 @@ const movieSchema = new Schema({
       validator(v) {
         return isURL(v);
       },
-      message: 'Некорректная ссылка',
+      message: (props) => `${props.value}. ${INVALID_DATA_MESSAGE}`,
     },
   },
   trailer: {
@@ -39,7 +40,8 @@ const movieSchema = new Schema({
       validator(v) {
         return isURL(v);
       },
-      message: 'Некорректная ссылка',
+      message: (props) => `${props.value}. ${INVALID_DATA_MESSAGE}`,
+
     },
   },
   thumbnail: {
@@ -49,7 +51,7 @@ const movieSchema = new Schema({
       validator(v) {
         return isURL(v);
       },
-      message: 'Некорректная ссылка',
+      message: (props) => `${props.value}. ${INVALID_DATA_MESSAGE}`,
     },
   },
   owner: {

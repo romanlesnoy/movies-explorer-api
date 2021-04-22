@@ -1,6 +1,15 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const isURL = require('validator/lib/isURL');
 const { getMovies, createMovie, deleteMovie } = require('../controllers/movies');
+const { INVALID_DATA_MESSAGE } = require('../utils/responseMesseges');
+
+const customValidationUrl = (value, helpers) => {
+  if (isURL(value)) {
+    return value;
+  }
+  return helpers.message(INVALID_DATA_MESSAGE);
+};
 
 router.get('/', getMovies);
 
@@ -13,9 +22,9 @@ router.post(
       duration: Joi.number().required(),
       year: Joi.string().required(),
       description: Joi.string().required(),
-      image: Joi.string().uri().required(),
-      trailer: Joi.string().uri().required(),
-      thumbnail: Joi.string().uri().required(),
+      image: Joi.string().required().custom(customValidationUrl),
+      trailer: Joi.string().required().custom(customValidationUrl),
+      thumbnail: Joi.string().required().custom(customValidationUrl),
       movieId: Joi.number().required(),
       nameRU: Joi.string().required(),
       nameEN: Joi.string().required(),

@@ -3,11 +3,10 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-error');
-const ValidationError = require('../errors/validation-error');
 const ConflictError = require('../errors/conflict-error');
 const { DEV_JWT_SECRET } = require('../utils/config');
 const {
-  NOT_FOUND_DATA_MESSAGE, INVALID_DATA_MESSAGE, CONFLICT_EMAIL_MESSAGE, SUCCSESS_REG_MESSAGE,
+  NOT_FOUND_DATA_MESSAGE, CONFLICT_EMAIL_MESSAGE, SUCCSESS_REG_MESSAGE,
 } = require('../utils/responseMesseges');
 
 const getUser = (req, res, next) => {
@@ -33,13 +32,18 @@ const updateProfile = (req, res, next) => {
     { runValidators: true, new: true },
   )
     .orFail(() => {
-      throw new ValidationError(INVALID_DATA_MESSAGE);
+      throw new NotFoundError(NOT_FOUND_DATA_MESSAGE);
     })
     .then((updateData) => {
       res.status(200).send({
         newEmail: updateData.email,
         newName: updateData.name,
       });
+    })
+    .catch((err) => {
+      if (err.name === 'MongoError' && err.code === 11000) {
+        next(new ConflictError(CONFLICT_EMAIL_MESSAGE));
+      }
     })
     .catch((err) => {
       next(err);
@@ -62,9 +66,11 @@ const createProfile = (req, res, next) => {
       });
     })
     .catch((err) => {
-      if (err.name === 'MongoError') {
+      if (err.name === 'MongoError' && err.code === 11000) {
         next(new ConflictError(CONFLICT_EMAIL_MESSAGE));
       }
+    })
+    .catch((err) => {
       next(err);
     });
 };

@@ -1,10 +1,17 @@
 const Movie = require('../models/movie');
 const NotFoundError = require('../errors/not-found-error');
 const ForbiddenError = require('../errors/forbidden-error');
-const { NOT_FOUND_DATA_MESSAGE, NO_ACCESS_RIGHTS_MESSAGE } = require('../utils/responseMesseges');
+const ValidationError = require('../errors/validation-error');
+const {
+  NOT_FOUND_DATA_MESSAGE,
+  NO_ACCESS_RIGHTS_MESSAGE,
+  SUCCSESS_DELETE_MESSAGE,
+  SUCCSESS_CREATE_MESSAGE,
+} = require('../utils/responseMesseges');
 
 const getMovies = (req, res, next) => {
-  Movie.find({})
+  const { _id } = req.user;
+  Movie.find({ owner: _id }).select('-owner')
     .then((movies) => res.status(200).send(movies))
     .catch((err) => next(err));
 };
@@ -38,8 +45,15 @@ const createMovie = (req, res, next) => {
     nameRU,
     nameEN,
   })
-    .then((movie) => {
-      res.status(200).send(movie);
+    .then(() => {
+      res.status(200).send({
+        message: SUCCSESS_CREATE_MESSAGE,
+      });
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new ValidationError(err.message));
+      }
     })
     .catch((err) => {
       next(err);
@@ -56,10 +70,13 @@ const deleteMovie = (req, res, next) => {
       if (String(movie.owner) !== owner) {
         throw new ForbiddenError(NO_ACCESS_RIGHTS_MESSAGE);
       }
-      return Movie.findByIdAndRemove(movie._id);
+      return Movie.findByIdAndRemove(movie._id).select('-owner');
     })
-    .then((deletedData) => {
-      res.status(200).send(deletedData);
+    .then((movie) => {
+      res.status(200).send({
+        message: SUCCSESS_DELETE_MESSAGE,
+        deleteMovie: movie,
+      });
     })
     .catch((err) => {
       next(err);
