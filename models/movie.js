@@ -61,6 +61,8 @@ const movieSchema = new Schema({
   },
   movieId: {
     type: Number,
+    index: true,
+    unique: true,
     required: true,
   },
   nameRU: {

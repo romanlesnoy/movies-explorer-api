@@ -2,9 +2,11 @@ const Movie = require('../models/movie');
 const NotFoundError = require('../errors/not-found-error');
 const ForbiddenError = require('../errors/forbidden-error');
 const ValidationError = require('../errors/validation-error');
+const ConflictError = require('../errors/conflict-error');
 const {
   NOT_FOUND_DATA_MESSAGE,
   NO_ACCESS_RIGHTS_MESSAGE,
+  CONFLICT_MOVIE_ID_MESAGE,
   SUCCSESS_DELETE_MESSAGE,
   SUCCSESS_CREATE_MESSAGE,
 } = require('../utils/responseMesseges');
@@ -52,11 +54,13 @@ const createMovie = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new ValidationError(err.message));
+        return next(new ValidationError(err.message));
+      } else if (err.name === 'MongoError' && err.code === 11000) {
+        console.log(err);
+        return next(new ConflictError(CONFLICT_MOVIE_ID_MESAGE));
+      } else {
+        return next(err);
       }
-    })
-    .catch((err) => {
-      next(err);
     });
 };
 

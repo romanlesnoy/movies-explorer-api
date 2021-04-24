@@ -42,11 +42,9 @@ const updateProfile = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'MongoError' && err.code === 11000) {
-        next(new ConflictError(CONFLICT_EMAIL_MESSAGE));
+        return next(new ConflictError(CONFLICT_EMAIL_MESSAGE));
       }
-    })
-    .catch((err) => {
-      next(err);
+      return next(err);
     });
 };
 
@@ -67,11 +65,10 @@ const createProfile = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'MongoError' && err.code === 11000) {
-        next(new ConflictError(CONFLICT_EMAIL_MESSAGE));
+        console.log(err);
+        return next(new ConflictError(CONFLICT_EMAIL_MESSAGE));
       }
-    })
-    .catch((err) => {
-      next(err);
+      return next(err);
     });
 };
 

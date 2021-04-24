@@ -2,7 +2,7 @@ const { Schema, model } = require('mongoose');
 const isEmail = require('validator/lib/isEmail');
 const bcrypt = require('bcrypt');
 const AuthError = require('../errors/auth-error');
-const { AUTH_DATA_ERROR_MESSAGE } = require('../utils/responseMesseges');
+const { AUTH_DATA_ERROR_MESSAGE, INVALID_DATA_MESSAGE } = require('../utils/responseMesseges');
 
 const userSchema = new Schema({
   email: {
@@ -13,7 +13,7 @@ const userSchema = new Schema({
       validator(v) {
         return isEmail(v);
       },
-      message: 'Введите корректный email',
+      message: (props) => `${props.value}. ${INVALID_DATA_MESSAGE}`,
     },
   },
   password: {
