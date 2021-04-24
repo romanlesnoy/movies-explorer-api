@@ -55,12 +55,10 @@ const createMovie = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(new ValidationError(err.message));
-      } else if (err.name === 'MongoError' && err.code === 11000) {
-        console.log(err);
+      } if (err.name === 'MongoError' && err.code === 11000) {
         return next(new ConflictError(CONFLICT_MOVIE_ID_MESAGE));
-      } else {
-        return next(err);
       }
+      return next(err);
     });
 };
 

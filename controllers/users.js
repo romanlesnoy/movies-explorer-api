@@ -65,7 +65,6 @@ const createProfile = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'MongoError' && err.code === 11000) {
-        console.log(err);
         return next(new ConflictError(CONFLICT_EMAIL_MESSAGE));
       }
       return next(err);
