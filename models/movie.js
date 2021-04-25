@@ -61,7 +61,6 @@ const movieSchema = new Schema({
   },
   movieId: {
     type: Number,
-    index: true,
     unique: true,
     required: true,
   },
@@ -73,6 +72,13 @@ const movieSchema = new Schema({
     type: String,
     required: true,
   },
+});
+
+movieSchema.index({
+  owner: 1,
+  movieId: 1,
+}, {
+  unique: true,
 });
 
 module.exports = model('movie', movieSchema);
