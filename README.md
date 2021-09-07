@@ -1,6 +1,9 @@
 # movies-explorer-api
 
-Ссылка на поддомен с api: https://api.movies-explorer.nomoredomains.icu
+
+[Ссылка на сайт](https://movies-explorer.nomoredomains.icu)
+
+[Ссылка на поддомен с api](https://api.movies-explorer.nomoredomains.icu)
 
 ### Описание
 
