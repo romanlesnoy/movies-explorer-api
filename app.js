@@ -18,6 +18,7 @@ mongoose.connect(NODE_ENV === 'production' ? PRODUCTION_DATA_BASE_PATH : DEV_DAT
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
+  useUnifiedTopology: true,
 });
 
 app.use(cors());
